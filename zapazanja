@@ -1,0 +1,85 @@
+Ukapirao sam da je razlika izmedju oatuh2 i 1 da je 1 obsolete tj zastareo metod
+oauth2 pravi manje requests i ima dobru podelu uloga
+zna se sta se trazi ko trazi imamo clients/servers podelu
+preko https ide tako da ne treba neko kriptovanje
+koliko sam ukapirao brzi je za 1/2 zahteva
+
+prvo se salju client_id secret scope pa se radi redirekcija na neki
+auth servis gde se vrsi autentifikacija
+nakon toga treba da dozvolimo da nasa app uzme neke podatke
+i tako jos jedan request na redirect url pada kada mi prihvatimo i dobijamo realno nase podatke
+
+dok u oauth1 izmedju kao response prvog zahteva trazimo temp access token
+pa kasnije pomocu tog tokena trazimo grant_types tj access token
+mada ima dosta i kriptovanja tu da se hendla treba i zato je kompleksniji
+oauth2 svi koriste trenutno i lakse i jednostavnije za impl
+ja sam odradio za oauth servis i google !
+a da pravimo oauth server zahteva dosta cimanja cuvanje podataka o koristniku
+nesto slicno sto bi obican login radio samo na sterodidima dobavljanje tokena
+refresh token itd
+
+
+ne mozemo da koristimo self signed sertifikate
+jer nisu bas pouzdani da bi imali potpun https mora neki CA da potipise taj sertifikat
+
+
+
+#
+
+Ako imamo nesto npr one to many many to many moramo da olabavimo negde
+ne moze da zavisi jedno od drugog mora da se napravi plan kako sta !!!
+moramo da napravimo nesto da bi ga dodali !
+
+
+
+
+
+
+
+
+
+
+
+
+U Flask-SQLAlchemy, veze između tabela se definišu pomoću relationship() funkcije iz SQLAlchemy-a. Ova funkcija je veoma moćna i omogućava detaljno konfigurisanje veza između modela, uključujući način učitavanja podataka, kako su povezane tabele, i još mnogo toga. Evo detaljnog objašnjenja ključnih aspekata relationship():
+
+1. lazy Parametar
+Parametar lazy određuje kada SQLAlchemy učitava podatke iz veze:
+
+select (podrazumevano): SQLAlchemy učitava vezane objekte istovremeno kada učita roditeljski objekat, koristeći dodatni SQL upit za svaki pristup roditeljskom upitu.
+joined: Učitava vezane objekte u istom upitu kao roditeljski objekat koristeći SQL JOIN. Ovo može biti efikasnije, ali može rezultirati složenijim upitima.
+subquery: Slično kao joined, ali koristi subquery za učitavanje vezanih objekata.
+dynamic: Učitavanje vezanih objekata se ne vrši odmah, već se vraća query objekat koji omogućava dalje upite i filtriranje pre učitavanja podataka. Ovo je korisno za veze sa velikim brojem objekata jer omogućava efikasnije upite.
+2. backref
+backref je konvenijentan način za deklarisanje nove relacije na drugoj strani veze. Na primer, ako imate veze između Parent i Child, definisanjem backref u Parent modelu automatski se dodaje atribut na Child model koji upućuje nazad na Parent.
+
+python
+Copy code
+class Parent(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    children = db.relationship('Child', backref='parent', lazy='select')
+
+class Child(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    parent_id = db.Column(db.Integer, db.ForeignKey('parent.id'))
+U ovom primeru, svaki Child instanca će imati parent atribut koji upućuje na njegov Parent.
+
+3. Prepoznavanje ForeignKey
+SQLAlchemy koristi ForeignKey za definisanje veza između tabela. ForeignKey se stavlja na kolonu u dete modelu koji ukazuje na roditeljsku kolonu (obično primarni ključ) roditeljskog modela.
+
+python
+Copy code
+class Child(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    parent_id = db.Column(db.Integer, db.ForeignKey('parent.id'))
+Ovde, parent_id je kolona u Child tabeli koja ima strani ključ koji se odnosi na id kolonu Parent tabele.
+
+4. Konfiguracija Veza
+SQLAlchemy omogućava dodatno konfigurisanje veza kroz razne parametre kao što su primaryjoin, secondaryjoin, secondary, i uselist:
+
+primaryjoin - Specificira uslov koji SQLAlchemy koristi da bi identifikovao kako su dva objekta povezana.
+secondary - Koristi se u many-to-many relacijama da specificira asocijacionu tabelu.
+secondaryjoin - U many-to-many relacijama, definira kako asocijaciona tabela spaja na drugu tabelu.
+uselist - Ako je postavljen na False, veza se tretira kao skalarni objekat (one-to-one) umesto kao lista (one-to-many).
+Zaključak
+SQLAlchemy pruža izuzetno fleksibilan i moćan način za rad sa relacijskim bazama podataka u Python aplikacijama, sa mnogo opcija za optimizaciju i prilagođavanje učitavanja i upravljanja podacima. Razumevanje ovih osnovnih koncepta ključno je za efikasno korišćenje ovog alata u razvoju Flask aplikacija.
