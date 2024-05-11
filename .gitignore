@@ -1,7 +1,7 @@
 .idea
- *__pycache__/
- alembic.ini
- cert.pem
- localhost.crt
- localhost.key
- key.pem
+*/__pycache__/
+alembic.ini
+cert.pem
+localhost.crt
+localhost.key
+key.pem
